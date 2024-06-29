@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #b58686;
+      }
+      .login-container {
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        text-align: center;
+      }
+      .login-container input {
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <h1>Login</h1>
+      <form id="loginForm">
+        Enter user id<input type="text" id="userid" name="userid" /><br />
+        Enter Email<input type="email" id="email" name="email" /> Enter
+        username<input type="text" id="username" name="username" />
+        <button type="button" onclick="login()">Log in</button>
+      </form>
+    </div>
+  </body>
+
+  <script>
+    async function login() {
+      const userid = document.getElementById('userid').value
+      const email = document.getElementById('email').value
+      const username = document.getElementById('username').value
+
+      const resp = await fetch('http://localhost:5000/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userid, username, email }),
+      })
+      const data = await resp.json()
+      const token = data.token
+      if (token) {
+        localStorage.setItem('token', token)
+        window.location.href = './Employees.html'
+      } else {
+        alert(data.error)
+      }
+    }
+  </script>
+</html>

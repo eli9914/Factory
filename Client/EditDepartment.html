@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Edit Department</title>
+    <style>
+      /* General styling for the body */
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0;
+        background-color: #c08171;
+        min-height: 100vh; /* Ensure the body takes up at least the full viewport height */
+      }
+
+      /* Container styling */
+      .container {
+        background-color: rgb(152, 91, 91);
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        margin-top: 20px;
+      }
+
+      h2 {
+        margin-bottom: 30px;
+        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        color: black;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+      }
+
+      select,
+      button {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+
+      button {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Edit Department</h2>
+      <form id="editDepartmentForm">
+        <input type="hidden" id="depId" />
+        <label for="name">Department Name:</label>
+        <input type="text" id="name" name="name" />
+
+        <label for="manager">Department Manager:</label>
+        <select id="manager" name="manager"></select>
+
+        <button type="button" onclick="updateDepartment()">Save</button>
+      </form>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const params = new URLSearchParams(window.location.search)
+        const depId = params.get('id')
+        if (depId) {
+          fetchDepartment(depId)
+        }
+      })
+
+      async function fetchDepartment(id) {
+        try {
+          const [departmentResp, employeesResp] = await Promise.all([
+            fetch(`http://localhost:5000/department/${id}`),
+            fetch(`http://localhost:5000/department/${id}/employees`),
+          ])
+          if (!departmentResp.ok || !employeesResp.ok) {
+            throw new Error('Failed to fetch department or employees data')
+          }
+          const department = await departmentResp.json()
+          const employees = await employeesResp.json()
+
+          document.getElementById('depId').value = department._id
+          document.getElementById('name').value = department.name
+
+          const managerSelect = document.getElementById('manager')
+          employees.forEach((emp) => {
+            const option = document.createElement('option')
+            option.value = emp._id
+            option.textContent = emp.name
+            managerSelect.appendChild(option)
+          })
+          // Set the current department manager as selected
+          managerSelect.value = department.manager
+        } catch (error) {
+          console.error('Error fetching department or employees:', error)
+        }
+      }
+
+      async function updateDepartment() {
+        const depId = document.getElementById('depId').value
+        const updatedDepartment = {
+          name: document.getElementById('name').value,
+          manager: document.getElementById('manager').value,
+        }
+
+        try {
+          const response = await fetch(
+            `http://localhost:5000/department/${depId}`,
+            {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(updatedDepartment),
+            }
+          )
+          if (!response.ok) {
+            throw new Error('Failed to update department')
+          }
+          alert('Department updated successfully')
+          window.location.href = 'departments.html'
+        } catch (error) {
+          console.error('Error updating department:', error)
+        }
+      }
+    </script>
+  </body>
+</html>
