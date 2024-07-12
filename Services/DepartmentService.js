@@ -26,6 +26,15 @@ const EditDep = async (id, updatedDep) => {
     throw new Error('Failed to Update Department')
   }
 }
+const AddDep = async (newDep) => {
+  try {
+    const newDepartment = new DepModel(newDep)
+    newDepartment.save()
+    return 'Created new Department'
+  } catch (error) {
+    throw new Error('Failed to Add Department')
+  }
+}
 const DeleteDep = async (id) => {
   try {
     await DepModel.findByIdAndDelete(id)
@@ -36,4 +45,4 @@ const DeleteDep = async (id) => {
   }
 }
 
-module.exports = { getAllDepartments, getDepById, EditDep, DeleteDep }
+module.exports = { getAllDepartments, getDepById, EditDep, AddDep, DeleteDep }

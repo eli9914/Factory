@@ -87,10 +87,14 @@
     <!-- Button to add new employee -->
     <div class="buttons">
       <button onclick="redirectToNewEmployee()">New Employee</button>
+      <button onclick="redirectToDepartments()">Departments List</button>
     </div>
     <script>
       function redirectToNewEmployee() {
         window.location.href = 'addEmployee.html'
+      }
+      function redirectToDepartments() {
+        window.location.href = 'Departments.html'
       }
 
       async function filterEmployees() {
@@ -143,6 +147,7 @@
             if (!shiftsResp.ok) {
               throw new Error('Shifts fetch was not ok')
             }
+
             const departmentResp = await fetch(
               `http://localhost:5000/employee/${emp._id}/department`
             )
@@ -151,6 +156,7 @@
             }
             const depname = await departmentResp.json()
             const shifts = await shiftsResp.json()
+
             const newTr = document.createElement('tr')
             const TdName = document.createElement('td')
             const TdDep = document.createElement('td')
@@ -158,7 +164,7 @@
             const TdShift = document.createElement('td')
 
             TdName.innerHTML = `<a href="editEmployee.html?id=${emp._id}">${emp.name}</a>`
-            TdDep.innerHTML = `<a href="editDepartment.html?id=${emp.departmentId}">${depname}</a>`
+            TdDep.innerHTML = `<a href="editDepartment.html?id=${emp.department}">${depname}</a>`
             TdYear.innerText = emp.start
 
             if (shifts.length > 0) {

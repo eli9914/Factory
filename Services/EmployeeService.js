@@ -11,6 +11,9 @@ const getAllEmployees = async () => {
 }
 
 const getEmpById = async (id) => {
+  if (!id) {
+    throw new Error('Employee ID is missing or invalid')
+  }
   try {
     return await EmployeeModel.findById(id)
   } catch (error) {
@@ -46,15 +49,7 @@ const DeleteEmployee = async (id) => {
     throw new Error('Failed to Delete Employee')
   }
 }
-// const filterEmployeesByDepartment = async (depid) => {
-//   try {
-//     const AllEmployees = await getAllEmployees()
-//     const DepEmployees = AllEmployees.filter((emp) => emp.department === dep.id)
-//     return DepEmployees
-//   } catch (error) {
-//     console.error('Error fetching employees:', error)
-//   }
-// }
+
 const getDepNameOfEmp = async (id) => {
   try {
     const emp = await getEmpById(id)
@@ -63,6 +58,16 @@ const getDepNameOfEmp = async (id) => {
   } catch (error) {
     console.error('Error fetching Department:', error)
     throw new Error('Failed to fetch department')
+  }
+}
+
+const getEmpByDepId = async (depid) => {
+  try {
+    const emp = await EmployeeModel.find({ department: depid })
+    return emp
+  } catch (error) {
+    console.error('Error fetching emp by department id:', error)
+    throw new Error('Error fetching emp by department id:')
   }
 }
 
@@ -86,6 +91,7 @@ const getShiftByEmp = async (id) => {
 module.exports = {
   getAllEmployees,
   getEmpById,
+  getEmpByDepId,
   AddEmployee,
   EditEmployee,
   DeleteEmployee,

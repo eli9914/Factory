@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <title>New Department</title>
+    <style></style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>Add Department</h2>
+      <form id="AddDepartmentForm">
+        <label for="name">Department Name:</label>
+        <input type="text" id="name" name="name" />
+        <label for="manager"></label>
+        <input type="hidden" id="manager" name="manager" />
+        <button id="AddButton" type="button" onclick="AddDepartment()">
+          Save
+        </button>
+
+        <button
+          id="CancleButton"
+          type="button"
+          onclick="redirectToDepartmentList()"
+        >
+          Cancle
+        </button>
+      </form>
+    </div>
+    <script>
+      async function redirectToDepartmentList() {
+        window.location.href = 'Departments.html'
+      }
+
+      async function AddDepartment() {
+        const newDepartment = {
+          name: document.getElementById('name').value,
+          manager: null,
+        }
+        console.log(manager)
+        try {
+          const response = await fetch(`http://localhost:5000/department`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newDepartment),
+          })
+          if (!response.ok) {
+            throw new Error('Failed to Add new department')
+          }
+          alert('Department Added successfully')
+          window.location.href = 'Departments.html'
+        } catch (error) {
+          console.error('Error Adding new Department:', error)
+        }
+      }
+    </script>
+  </body>
+</html>

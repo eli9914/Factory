@@ -1,7 +1,5 @@
-<!DOCTYPE html>
 <html>
   <head>
-    <title>Edit Department</title>
     <style>
       /* General styling for the body */
       body {
@@ -13,102 +11,186 @@
         background-color: #c08171;
         min-height: 100vh; /* Ensure the body takes up at least the full viewport height */
       }
-
-      /* Container styling */
-      .container {
-        background-color: rgb(152, 91, 91);
-        padding: 40px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        width: 300px;
-        margin-top: 20px;
-      }
-
-      h2 {
-        margin-bottom: 30px;
-        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-        color: black;
-      }
-
       label {
         display: block;
         margin-bottom: 8px;
         font-weight: bold;
       }
 
-      select,
-      button {
+      input[type='text'],
+      select {
         width: 100%;
-        padding: 10px;
+        padding: 8px;
         margin-bottom: 10px;
         border: 1px solid #ccc;
         border-radius: 4px;
-        box-sizing: border-box;
       }
 
-      button {
+      #updateButton {
+        width: 100%;
+        padding: 10px;
         background-color: #4caf50;
         color: white;
         border: none;
+        border-radius: 4px;
         cursor: pointer;
         transition: background-color 0.3s ease;
       }
 
-      button:hover {
+      #updateButton:hover {
         background-color: #45a049;
+      }
+      #deleteButton {
+        width: 100%;
+        padding: 10px;
+        background-color: #b42700;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      #deleteButton:hover {
+        background-color: #a40000;
       }
     </style>
   </head>
+
   <body>
-    <div class="container">
-      <h2>Edit Department</h2>
-      <form id="editDepartmentForm">
-        <input type="hidden" id="depId" />
-        <label for="name">Department Name:</label>
-        <input type="text" id="name" name="name" />
+    <h2>Edit Department</h2>
+    <form id="editDepartmentForm">
+      <input type="hidden" id="depId" />
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" />
 
-        <label for="manager">Department Manager:</label>
-        <select id="manager" name="manager"></select>
+      <label for="manager">Select Manager:</label>
+      <select id="manager" name="manager"></select>
 
-        <button type="button" onclick="updateDepartment()">Save</button>
-      </form>
-    </div>
+      <label for="addemp">Add Employee to department:</label>
+      <select id="addemp" name="addemp"></select>
+      <button id="addButton" type="button" onclick="addEmployeeToDepartment()">
+        Add To Department</button
+      ><br /><br />
+
+      <button id="updateButton" type="button" onclick="updateDepartment()">
+        Save
+      </button>
+      <button id="deleteButton" type="button" onclick="DeleteDepartment()">
+        Delete Department
+      </button>
+    </form>
 
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener('DOMContentLoaded', async () => {
         const params = new URLSearchParams(window.location.search)
         const depId = params.get('id')
         if (depId) {
-          fetchDepartment(depId)
+          await fetchDepartment(depId)
         }
+        await fetchAllEmployees()
       })
 
       async function fetchDepartment(id) {
         try {
-          const [departmentResp, employeesResp] = await Promise.all([
-            fetch(`http://localhost:5000/department/${id}`),
-            fetch(`http://localhost:5000/department/${id}/employees`),
-          ])
-          if (!departmentResp.ok || !employeesResp.ok) {
-            throw new Error('Failed to fetch department or employees data')
+          const resp = await fetch(`http://localhost:5000/department/${id}`)
+          if (!resp.ok) {
+            throw new Error('Failed to fetch department`s data')
           }
-          const department = await departmentResp.json()
-          const employees = await employeesResp.json()
+          const department = await resp.json()
 
           document.getElementById('depId').value = department._id
           document.getElementById('name').value = department.name
 
-          const managerSelect = document.getElementById('manager')
-          employees.forEach((emp) => {
+          await fetchDepEmployees(department._id)
+          document.getElementById('manager').value = department.manager
+        } catch (error) {}
+      }
+
+      async function fetchDepEmployees(id) {
+        const resp = await fetch(
+          `http://localhost:5000/employee/department/${id}`
+        )
+        if (!resp.ok) {
+          throw new Error('Failed to fetch department`s employees')
+        }
+        const employees = await resp.json()
+        const employeeSelect = document.getElementById('manager')
+        employeeSelect.innerHTML = '' // Clear previous options
+        employees.forEach((emp) => {
+          const option = document.createElement('option')
+          option.value = emp._id
+          option.text = emp.name
+          employeeSelect.appendChild(option)
+        })
+      }
+
+      async function fetchAllEmployees() {
+        const resp = await fetch(`http://localhost:5000/employee`)
+        if (!resp.ok) {
+          throw new Error('Failed to fetch employees')
+        }
+        const employees = await resp.json()
+
+        const addEmpSelect = document.getElementById('addemp')
+        const managerSelect = document.getElementById('manager')
+        addEmpSelect.innerHTML = '' // Clear previous options
+
+        // Get the manager IDs that are already in the manager select
+
+        const managerIds = Array.from(managerSelect.options).map(
+          (option) => option.value
+        )
+
+        employees.forEach((emp) => {
+          if (!managerIds.includes(emp._id)) {
             const option = document.createElement('option')
             option.value = emp._id
-            option.textContent = emp.name
-            managerSelect.appendChild(option)
-          })
-          // Set the current department manager as selected
-          managerSelect.value = department.manager
+            option.text = emp.name
+            addEmpSelect.appendChild(option)
+          }
+        })
+      }
+
+      async function addEmployeeToDepartment() {
+        const empId = document.getElementById('addemp').value
+        const depId = document.getElementById('depId').value
+
+        try {
+          // Fetch the employee data
+          const resp = await fetch(`http://localhost:5000/employee/${empId}`)
+          if (!resp.ok) {
+            throw new Error('Failed to fetch employee')
+          }
+          const emp = await resp.json()
+
+          // Update the employee's department
+          const updatedEmployee = {
+            ...emp,
+            department: depId,
+          }
+
+          // Send the updated employee data to the server
+          const response = await fetch(
+            `http://localhost:5000/employee/${empId}`,
+            {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(updatedEmployee),
+            }
+          )
+
+          if (!response.ok) {
+            throw new Error('Failed to add employee to department')
+          }
+
+          // Optionally, you can update the UI or give feedback to the user here
+          alert('Employee added to department successfully')
+          window.location.reload()
         } catch (error) {
-          console.error('Error fetching department or employees:', error)
+          console.error('Error adding employee to department:', error)
         }
       }
 
@@ -118,7 +200,6 @@
           name: document.getElementById('name').value,
           manager: document.getElementById('manager').value,
         }
-
         try {
           const response = await fetch(
             `http://localhost:5000/department/${depId}`,
@@ -134,9 +215,58 @@
             throw new Error('Failed to update department')
           }
           alert('Department updated successfully')
-          window.location.href = 'departments.html'
+          window.location.href = 'Departments.html'
         } catch (error) {
           console.error('Error updating department:', error)
+        }
+      }
+
+      async function DeleteDepartment() {
+        const depId = document.getElementById('depId').value
+        try {
+          const response = await fetch(
+            `http://localhost:5000/department/${depId}`,
+            {
+              method: 'DELETE',
+            }
+          )
+          if (!response.ok) {
+            throw new Error('Failed to Delete department')
+          }
+
+          // Fetch all employees of the department
+          const empResponse = await fetch(
+            `http://localhost:5000/employee/department/${depId}`
+          )
+          if (!empResponse.ok) {
+            throw new Error('Failed to fetch employees of the department')
+          }
+          const employees = await empResponse.json()
+          // Delete each employee
+          const deleteEmployeePromises = employees.map(async (emp) => {
+            try {
+              const deleteEmpResponse = await fetch(
+                `http://localhost:5000/employee/${emp._id}`,
+                {
+                  method: 'DELETE',
+                }
+              )
+              if (!deleteEmpResponse.ok) {
+                throw new Error(`Failed to delete employee ${emp.name}`)
+              }
+            } catch (error) {
+              console.error(`Error deleting employee ${emp.name}:`, error)
+              // Handle error deleting employee if needed
+            }
+          })
+
+          // Wait for all employee delete requests to complete
+          await Promise.all(deleteEmployeePromises)
+
+          alert('Department Deleted successfully')
+          window.location.href = 'departments.html'
+        } catch (error) {
+          console.error('Error Deleting department:', error)
         }
       }
     </script>

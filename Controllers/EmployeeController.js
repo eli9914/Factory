@@ -11,6 +11,9 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   return res.json(await EmployeeService.getEmpById(req.params.id))
 })
+router.get('/department/:depid', async (req, res) => {
+  return res.json(await EmployeeService.getEmpByDepId(req.params.depid))
+})
 
 router.put('/:id', async (req, res) => {
   const Updateduser = req.body
