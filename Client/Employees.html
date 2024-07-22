@@ -88,6 +88,7 @@
     <div class="buttons">
       <button onclick="redirectToNewEmployee()">New Employee</button>
       <button onclick="redirectToDepartments()">Departments List</button>
+      <button onclick="redirectToShifts()">Shifts List</button>
     </div>
     <script>
       function redirectToNewEmployee() {
@@ -95,6 +96,9 @@
       }
       function redirectToDepartments() {
         window.location.href = 'Departments.html'
+      }
+      function redirectToShifts() {
+        window.location.href = 'Shifts.html'
       }
 
       async function filterEmployees() {
@@ -170,7 +174,9 @@
             if (shifts.length > 0) {
               TdShift.innerText = shifts.map(
                 (shift) =>
-                  `Date: ${shift.date}, Start: ${shift.startingHour}, End: ${shift.endingHour}`
+                  `Date: ${formatDate(shift.date)}, Start: ${
+                    shift.startingHour
+                  }, End: ${shift.endingHour}`
               )
             } else {
               TdShift.innerText = 'No shifts'
@@ -185,6 +191,15 @@
             console.error('Error fetching shifts for employee:', emp._id, error)
           }
         })
+      }
+      function formatDate(isoDate) {
+        const date = new Date(isoDate)
+        const options = {
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric',
+        }
+        return date.toLocaleString(undefined, options)
       }
     </script>
   </body>

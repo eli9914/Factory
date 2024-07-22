@@ -185,8 +185,6 @@
           if (!response.ok) {
             throw new Error('Failed to add employee to department')
           }
-
-          // Optionally, you can update the UI or give feedback to the user here
           alert('Employee added to department successfully')
           window.location.reload()
         } catch (error) {
@@ -224,16 +222,6 @@
       async function DeleteDepartment() {
         const depId = document.getElementById('depId').value
         try {
-          const response = await fetch(
-            `http://localhost:5000/department/${depId}`,
-            {
-              method: 'DELETE',
-            }
-          )
-          if (!response.ok) {
-            throw new Error('Failed to Delete department')
-          }
-
           // Fetch all employees of the department
           const empResponse = await fetch(
             `http://localhost:5000/employee/department/${depId}`
@@ -242,6 +230,7 @@
             throw new Error('Failed to fetch employees of the department')
           }
           const employees = await empResponse.json()
+
           // Delete each employee
           const deleteEmployeePromises = employees.map(async (emp) => {
             try {
@@ -256,17 +245,27 @@
               }
             } catch (error) {
               console.error(`Error deleting employee ${emp.name}:`, error)
-              // Handle error deleting employee if needed
             }
           })
 
           // Wait for all employee delete requests to complete
           await Promise.all(deleteEmployeePromises)
 
-          alert('Department Deleted successfully')
+          // delete the department
+          const response = await fetch(
+            `http://localhost:5000/department/${depId}`,
+            {
+              method: 'DELETE',
+            }
+          )
+          if (!response.ok) {
+            throw new Error('Failed to delete department')
+          }
+
+          alert('Department deleted successfully')
           window.location.href = 'departments.html'
         } catch (error) {
-          console.error('Error Deleting department:', error)
+          console.error('Error deleting department:', error)
         }
       }
     </script>

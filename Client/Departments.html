@@ -133,6 +133,7 @@
 
             tdName.innerText = department.name
             tdName.innerHTML = `<a href="editDepartment.html?id=${department._id}">${tdName.innerText}</a>`
+            // tdName.innerHTML = `<a href="editDepartment.html?id=${department._id}">${department.name}</a>`
 
             tdManager.innerHTML =
               manager.name === 'No Manager Assigned'

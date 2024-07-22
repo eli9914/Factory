@@ -1,6 +1,5 @@
 const ShiftModel = require('../Models/ShiftModel')
-const EmployeeService = require('../Services/EmployeeService')
-
+const EmployeeModel = require('../Models/EmployeModel')
 const getAllShifts = async () => {
   return await ShiftModel.find({})
 }
@@ -18,6 +17,18 @@ const EditShift = async (id, updatedshift) => {
     throw new Error('Failed to Update Shift')
   }
 }
+
+const AddShift = async (shiftData) => {
+  try {
+    const newShift = new ShiftModel(shiftData)
+    await newShift.save()
+    return 'Shift Created'
+  } catch (error) {
+    console.log('Error Creating Shift')
+    throw new Error('Failed to Create Shift')
+  }
+}
+
 const DeleteShift = async (id) => {
   try {
     await ShiftModel.findByIdAndDelete(id)
@@ -27,25 +38,39 @@ const DeleteShift = async (id) => {
     throw new Error('Failed to Delete Shift')
   }
 }
+
+const AddEmpToShift = async (id, EmployeesId) => {
+  try {
+    await ShiftModel.findByIdAndUpdate(
+      shiftId,
+      { $addToSet: { employees: { $each: employeeIds } } }, // Ensure unique employees
+      { new: true }
+    )
+    return 'Employees Added to Shift'
+  } catch (error) {
+    console.error('Error Adding Employees to Shift:', error)
+    throw new Error('Failed to Add Employees to Shift')
+  }
+}
+
 const EmployeesOfShift = async (id) => {
   const shift = await getShiftById(id)
-  const EmployeesOfShift = shift.employees
+  const employeeIds = shift.employees
 
-  // Create an array of promises for fetching employees
-  const employeePromises = EmployeesOfShift.map(async (Emp) => {
-    return await EmployeeService.getEmpById(Emp)
+  const employeePromises = employeeIds.map(async (empId) => {
+    return await EmployeeModel.findById(empId)
   })
 
-  // Wait for all promises to resolve
-  const EmpList = await Promise.all(employeePromises)
-
-  return EmpList
+  const employees = await Promise.all(employeePromises)
+  return employees
 }
 
 module.exports = {
   getAllShifts,
   getShiftById,
+  AddShift,
   EditShift,
-  DeleteShift,
+  AddEmpToShift,
   EmployeesOfShift,
+  DeleteShift,
 }
