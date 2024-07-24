@@ -2,71 +2,9 @@
 <html>
   <head>
     <title>Add Employee</title>
-    <style>
-      /* General styling for the body */
-      body {
-        font-family: Arial, sans-serif;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin: 0;
-        background-color: #c08171;
-        min-height: 100vh; /* Ensure the body takes up at least the full viewport height */
-      }
-      .container {
-        background-color: #a76c5d;
-        padding: 40px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        width: 300px;
-        margin-top: 20px;
-      }
-
-      label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: bold;
-      }
-
-      input[type='text'],
-      select {
-        width: 100%;
-        padding: 8px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-      }
-      #AddButton {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 8px;
-        background-color: #4caf50;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-
-      #AddButton:hover {
-        background-color: #45a049;
-      }
-      #CancleButton {
-        width: 100%;
-        padding: 10px;
-        background-color: #b42700;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-
-      #CancleButton:hover {
-        background-color: #a40000;
-      }
-    </style>
   </head>
+  <link rel="stylesheet" href="General.css" />
+  <link rel="stylesheet" href="Add.Css" />
   <body onload="fetchDepartments()">
     <div class="container">
       <h2>Add Employee</h2>
