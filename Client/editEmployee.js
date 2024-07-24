@@ -72,17 +72,68 @@ async function updateEmployee() {
     console.error('Error updating employee:', error)
   }
 }
-
 async function DeleteEmployee() {
   const empId = document.getElementById('empId').value
-  await DeleteEmpFromShift(empId)
+
   try {
-    const response = await fetch(`http://localhost:5000/employee/${empId}`, {
-      method: 'DELETE',
-    })
-    if (!response.ok) {
+    // Check if the employee is a manager
+    const empResponse = await fetch(`http://localhost:5000/employee/${empId}`)
+    if (!empResponse.ok) {
+      throw new Error('Failed to fetch employee')
+    }
+    const employee = await empResponse.json()
+
+    if (employee && employee.department) {
+      const departmentId = employee.department
+
+      // Fetch department details
+      const deptResponse = await fetch(
+        `http://localhost:5000/department/${departmentId}`
+      )
+      if (!deptResponse.ok) {
+        throw new Error('Failed to fetch department')
+      }
+      const department = await deptResponse.json()
+
+      // Check if the employee is the manager
+      if (department.manager === empId) {
+        // Update department to remove the manager
+        const updatedDepartment = {
+          ...department,
+          manager: null,
+        }
+
+        const updateDeptResponse = await fetch(
+          `http://localhost:5000/department/${departmentId}`,
+          {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedDepartment),
+          }
+        )
+
+        if (!updateDeptResponse.ok) {
+          throw new Error('Failed to update department')
+        }
+      }
+    }
+
+    // Proceed to delete the employee
+    await DeleteEmpFromShift(empId)
+
+    const deleteEmpResponse = await fetch(
+      `http://localhost:5000/employee/${empId}`,
+      {
+        method: 'DELETE',
+      }
+    )
+
+    if (!deleteEmpResponse.ok) {
       throw new Error('Failed to delete employee')
     }
+
     alert('Employee deleted successfully')
     window.location.href = 'employees.html'
   } catch (error) {

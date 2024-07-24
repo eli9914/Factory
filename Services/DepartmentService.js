@@ -45,4 +45,10 @@ const DeleteDep = async (id) => {
   }
 }
 
-module.exports = { getAllDepartments, getDepById, EditDep, AddDep, DeleteDep }
+module.exports = {
+  getAllDepartments,
+  getDepById,
+  EditDep,
+  AddDep,
+  DeleteDep,
+}
