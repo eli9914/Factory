@@ -39,20 +39,6 @@ const DeleteShift = async (id) => {
   }
 }
 
-const AddEmpToShift = async (id, EmployeesId) => {
-  try {
-    await ShiftModel.findByIdAndUpdate(
-      shiftId,
-      { $addToSet: { employees: { $each: employeeIds } } }, // Ensure unique employees
-      { new: true }
-    )
-    return 'Employees Added to Shift'
-  } catch (error) {
-    console.error('Error Adding Employees to Shift:', error)
-    throw new Error('Failed to Add Employees to Shift')
-  }
-}
-
 const EmployeesOfShift = async (id) => {
   const shift = await getShiftById(id)
   const employeeIds = shift.employees
@@ -70,7 +56,6 @@ module.exports = {
   getShiftById,
   AddShift,
   EditShift,
-  AddEmpToShift,
   EmployeesOfShift,
   DeleteShift,
 }

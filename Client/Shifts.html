@@ -72,21 +72,22 @@
         width: 20%;
         margin-top: 20px;
       }
-      
-      .form-container input, .form-container select {
+
+      .form-container input,
+      .form-container select {
         padding: 10px;
         margin-bottom: 10px;
         width: calc(100% - 22px); /* Full width minus padding */
       }
 
-      .form-container input[type="submit"] {
+      .form-container input[type='submit'] {
         background-color: #328a35;
         color: white;
         border: none;
         cursor: pointer;
       }
 
-      .form-container input[type="submit"]:hover {
+      .form-container input[type='submit']:hover {
         background-color: #45a049;
       }
     </style>
@@ -97,6 +98,7 @@
     <table border="1" id="shiftTable">
       <thead>
         <tr>
+          <th>ID</th>
           <th>Date</th>
           <th>Starting Hour</th>
           <th>Ending Hour</th>
@@ -107,142 +109,33 @@
     </table>
 
     <div id="employeesSection" class="employees-list"></div>
-
+    <br />
+    <div class="form-container">
+      <h2>Create New Shift</h2>
+      <form id="createShiftForm" onsubmit="CreateNewShift(event)">
+        <input type="date" id="shiftDate" required />
+        <input
+          type="number"
+          id="startingHour"
+          placeholder="Starting Hour"
+          min="1"
+          max="24"
+          required
+        />
+        <input
+          type="number"
+          id="endingHour"
+          placeholder="Ending Hour"
+          min="1"
+          max="24"
+          required
+        />
+        <input type="submit" value="Create Shift" />
+      </form>
     </div>
-    <br>
     <div class="buttons">
       <button onclick="redirectToEmployees()">Employees Page</button>
     </div>
-
-
-    <div class="form-container">
-        <h2>Create New Shift</h2>
-        <form id="createShiftForm">
-          <input type="date" id="shiftDate" required />
-          <input type="number" id="startingHour" placeholder="Starting Hour" min="1" max="24" required />
-          <input type="number" id="endingHour" placeholder="Ending Hour" min="1" max="24" required />
-          <input type="submit" value="Create Shift" onclick="CreateNewShift()"/>
-        </form>
-      </div>
-
-    <script>
-      function redirectToEmployees() {
-        window.location.href = 'Employees.html'
-      }
-      function redirectToDepartments() {
-        window.location.href = 'Departments.html'
-      }
-      async function PopulateShiftTable() {
-        try {
-          const resp = await fetch('http://localhost:5000/shifts')
-          if (!resp.ok) {
-            throw new Error('Failed to fetch shifts')
-          }
-
-          const shifts = await resp.json()
-          const shiftTable = document.getElementById('shiftTableBody')
-
-          shifts.forEach((shift) => {
-            const newTr = document.createElement('tr')
-
-            const dateTd = document.createElement('td')
-            const startTd = document.createElement('td')
-            const endTd = document.createElement('td')
-            const actionTd = document.createElement('td')
-
-            dateTd.innerText = formatDate(shift.date)
-            startTd.innerText = shift.startingHour
-            endTd.innerText = shift.endingHour
-
-            const showEmployeesButton = document.createElement('button')
-            showEmployeesButton.innerText = 'Show Employees'
-            showEmployeesButton.onclick = () => showEmployeesOfShift(shift._id)
-
-            actionTd.appendChild(showEmployeesButton)
-
-            newTr.appendChild(dateTd)
-            newTr.appendChild(startTd)
-            newTr.appendChild(endTd)
-            newTr.appendChild(actionTd)
-
-            shiftTable.appendChild(newTr)
-          })
-        } catch (error) {
-          console.error('Error fetching shifts:', error)
-        }
-      }
-      function formatDate(isoDate) {
-        const date = new Date(isoDate)
-        const options = {
-          year: 'numeric',
-          month: 'numeric',
-          day: 'numeric',
-        }
-        return date.toLocaleString(undefined, options)
-      }
-
-      async function showEmployeesOfShift(shiftId) {
-        try {
-          const resp = await fetch(
-            `http://localhost:5000/shifts/${shiftId}/employees`
-          )
-          if (!resp.ok) {
-            throw new Error('Failed to fetch shift employees')
-          }
-          const employees = await resp.json()
-          const employeesSection = document.getElementById('employeesSection')
-
-          // Clear previous employees list
-
-          employeesSection.innerHTML = ''
-
-          const employeeList = document.createElement('ul')
-
-          employees.forEach((emp) => {
-            const empli = document.createElement('li')
-
-            empli.innerText =
-              'Employee Name:' +
-              emp.name +
-              ',' +
-              ' ' +
-              'Employee Start Year:' +
-              emp.start
-
-            employeeList.appendChild(empli)
-          })
-
-          employeesSection.appendChild(employeeList)
-        } catch (error) {
-          console.error('Error fetching shift details:', error)
-        }
-      }
-
-      async function CreateNewShift(){
-        const date=document.getElementById('shiftDate')
-        const startHour=document.getElementById('startingHour')
-        const endHour=document.getElementById('endingHour')
-        try {
-            const resp=await fetch('http://localhost:5000/shifts',
-            {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ date, startingHour, endingHour }),
-          });
-          if (!resp.ok) {
-            throw new Error('Failed to create shift');
-          }
-          alert('Shift created successfully');
-           window.location.href = 'Shifts.html'
-        } catch (error) {
-            console.error('Error creating shift:', error);
-        }
-
-      }
-
-
-    </script>
+    <script src="Shifts.js"></script>
   </body>
 </html>
