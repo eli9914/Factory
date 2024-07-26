@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', async () => {
+  token = localStorage.getItem('token')
+  if (!token) {
+    alert('You need to log in first.')
+    window.location.href = 'login.html'
+    return
+  }
   const params = new URLSearchParams(window.location.search)
   const depId = params.get('id')
   if (depId) {
@@ -7,9 +13,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   await fetchAllEmployees()
 })
 
+async function GoBack() {
+  window.history.back()
+}
 async function fetchDepartment(id) {
   try {
-    const resp = await fetch(`http://localhost:5000/department/${id}`)
+    const resp = await fetch(`http://localhost:5000/department/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     if (!resp.ok) {
       throw new Error('Failed to fetch department data')
     }
@@ -26,7 +39,11 @@ async function fetchDepartment(id) {
 }
 
 async function fetchDepEmployees(id) {
-  const resp = await fetch(`http://localhost:5000/employee/department/${id}`)
+  const resp = await fetch(`http://localhost:5000/employee/department/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
   if (!resp.ok) {
     throw new Error('Failed to fetch department employees')
   }
@@ -42,7 +59,11 @@ async function fetchDepEmployees(id) {
 }
 
 async function fetchAllEmployees() {
-  const resp = await fetch(`http://localhost:5000/employee`)
+  const resp = await fetch(`http://localhost:5000/employee`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
   if (!resp.ok) {
     throw new Error('Failed to fetch employees')
   }
@@ -73,7 +94,11 @@ async function addEmployeeToDepartment() {
 
   try {
     // Fetch the employee data
-    const resp = await fetch(`http://localhost:5000/employee/${empId}`)
+    const resp = await fetch(`http://localhost:5000/employee/${empId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     if (!resp.ok) {
       throw new Error('Failed to fetch employee')
     }
@@ -90,6 +115,7 @@ async function addEmployeeToDepartment() {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(updatedEmployee),
     })
@@ -115,6 +141,7 @@ async function updateDepartment() {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(updatedDepartment),
     })
@@ -133,7 +160,12 @@ async function DeleteDepartment() {
   try {
     // Fetch all employees of the department
     const empResponse = await fetch(
-      `http://localhost:5000/employee/department/${depId}`
+      `http://localhost:5000/employee/department/${depId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     )
     if (!empResponse.ok) {
       throw new Error('Failed to fetch employees of the department')
@@ -148,6 +180,9 @@ async function DeleteDepartment() {
     // Delete the department
     const response = await fetch(`http://localhost:5000/department/${depId}`, {
       method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
     if (!response.ok) {
       throw new Error('Failed to delete department')
@@ -165,6 +200,9 @@ async function DeleteEmployee(empId) {
   try {
     const response = await fetch(`http://localhost:5000/employee/${empId}`, {
       method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
     if (!response.ok) {
       throw new Error('Failed to delete employee')
@@ -178,7 +216,12 @@ async function DeleteEmployee(empId) {
 async function DeleteEmpFromShift(empId) {
   try {
     const shiftsResp = await fetch(
-      `http://localhost:5000/employee/${empId}/shifts`
+      `http://localhost:5000/employee/${empId}/shifts`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     )
     if (!shiftsResp.ok) {
       throw new Error('Failed to fetch employee shifts')
@@ -194,6 +237,7 @@ async function DeleteEmpFromShift(empId) {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ employees: updatedEmployees }),
         })

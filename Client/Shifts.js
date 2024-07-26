@@ -1,3 +1,9 @@
+let token = localStorage.getItem('token')
+if (!token) {
+  alert('You need to log in first.')
+  window.location.href = 'login.html'
+}
+
 function redirectToEmployees() {
   window.location.href = 'Employees.html'
 }
@@ -8,7 +14,11 @@ function redirectToDepartments() {
 
 async function PopulateShiftTable() {
   try {
-    const resp = await fetch('http://localhost:5000/shifts')
+    const resp = await fetch('http://localhost:5000/shifts', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     if (!resp.ok) {
       throw new Error('Failed to fetch shifts')
     }
@@ -62,7 +72,12 @@ function formatDate(isoDate) {
 async function showEmployeesOfShift(shiftId) {
   try {
     const resp = await fetch(
-      `http://localhost:5000/shifts/${shiftId}/employees`
+      `http://localhost:5000/shifts/${shiftId}/employees`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     )
     if (!resp.ok) {
       throw new Error('Failed to fetch shift employees')
@@ -95,7 +110,11 @@ async function showEmployeesOfShift(shiftId) {
     }
 
     //fetch all employees
-    const allEmpResp = await fetch('http://localhost:5000/employee')
+    const allEmpResp = await fetch('http://localhost:5000/employee', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     if (!allEmpResp.ok) {
       throw new Error('Failed to fetch employees')
     }
@@ -136,6 +155,7 @@ async function AddEmpToShift(shiftId, EmpsOfShift) {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ employees: [...EmpsOfShift, Emp] }),
     })
@@ -146,7 +166,11 @@ async function AddEmpToShift(shiftId, EmpsOfShift) {
     showEmployeesOfShift(shiftId)
 
     // Update the Shift of Employees
-    const EmpResp = await fetch(`http://localhost:5000/employee/${Emp}`)
+    const EmpResp = await fetch(`http://localhost:5000/employee/${Emp}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     const employee = await EmpResp.json()
 
     // Add the new shift to the employee's shift array
@@ -154,6 +178,7 @@ async function AddEmpToShift(shiftId, EmpsOfShift) {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ shift: [...employee.shift, shiftId] }),
     })
@@ -179,6 +204,7 @@ async function CreateNewShift(event) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         date: formattedDate,

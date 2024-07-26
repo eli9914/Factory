@@ -1,4 +1,12 @@
+let token
+
 document.addEventListener('DOMContentLoaded', () => {
+  token = localStorage.getItem('token')
+  if (!token) {
+    alert('You need to log in first.')
+    window.location.href = 'login.html'
+    return
+  }
   const params = new URLSearchParams(window.location.search)
   const empId = params.get('id')
   if (empId) {
@@ -8,9 +16,17 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchDepartments()
 })
 
+async function GoBack() {
+  window.history.back()
+}
+
 async function fetchEmployee(id) {
   try {
-    const response = await fetch(`http://localhost:5000/employee/${id}`)
+    const response = await fetch(`http://localhost:5000/employee/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     if (!response.ok) {
       throw new Error('Failed to fetch employee data')
     }
@@ -29,7 +45,11 @@ async function fetchEmployee(id) {
 
 async function fetchDepartments() {
   try {
-    const resp = await fetch('http://localhost:5000/department')
+    const resp = await fetch('http://localhost:5000/department', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     if (!resp.ok) {
       throw new Error('Failed to fetch departments')
     }
@@ -60,6 +80,7 @@ async function updateEmployee() {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(updatedEmployee),
     })
@@ -77,7 +98,11 @@ async function DeleteEmployee() {
 
   try {
     // Check if the employee is a manager
-    const empResponse = await fetch(`http://localhost:5000/employee/${empId}`)
+    const empResponse = await fetch(`http://localhost:5000/employee/${empId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     if (!empResponse.ok) {
       throw new Error('Failed to fetch employee')
     }
@@ -88,7 +113,12 @@ async function DeleteEmployee() {
 
       // Fetch department details
       const deptResponse = await fetch(
-        `http://localhost:5000/department/${departmentId}`
+        `http://localhost:5000/department/${departmentId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       )
       if (!deptResponse.ok) {
         throw new Error('Failed to fetch department')
@@ -109,6 +139,7 @@ async function DeleteEmployee() {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(updatedDepartment),
           }
@@ -127,6 +158,9 @@ async function DeleteEmployee() {
       `http://localhost:5000/employee/${empId}`,
       {
         method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     )
 
@@ -145,7 +179,12 @@ async function DeleteEmpFromShift(empId) {
   try {
     console.log('Hello from DeleteEmpFromShift')
     const shiftsResp = await fetch(
-      `http://localhost:5000/employee/${empId}/shifts`
+      `http://localhost:5000/employee/${empId}/shifts`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     )
     if (!shiftsResp.ok) {
       throw new Error('Failed to fetch employee shifts')
@@ -162,6 +201,7 @@ async function DeleteEmpFromShift(empId) {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ employees: updatedEmployees }),
       })
@@ -177,7 +217,12 @@ async function DeleteEmpFromShift(empId) {
 async function fetchShifts(empid) {
   try {
     const response = await fetch(
-      `http://localhost:5000/employee/${empid}/shifts`
+      `http://localhost:5000/employee/${empid}/shifts`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     )
     if (!response.ok) {
       throw new Error('Failed to fetch shifts')

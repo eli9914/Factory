@@ -1,3 +1,9 @@
+let token = localStorage.getItem('token')
+if (!token) {
+  alert('You need to log in first.')
+  window.location.href = 'login.html'
+}
+
 function redirectToNewDepartment() {
   window.location.href = 'addDepartment.html'
 }
@@ -10,7 +16,11 @@ async function populateDepartmentTable() {
   const depTableBody = document.getElementById('DepTableBody')
 
   try {
-    const resp = await fetch('http://localhost:5000/department')
+    const resp = await fetch('http://localhost:5000/department', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     if (!resp.ok) {
       throw new Error('Failed to fetch departments')
     }
@@ -23,7 +33,12 @@ async function populateDepartmentTable() {
       let manager = { name: 'No Manager Assigned' } // Default manager value
       if (department.manager) {
         const managerResp = await fetch(
-          `http://localhost:5000/employee/${department.manager}`
+          `http://localhost:5000/employee/${department.manager}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         )
         if (!managerResp.ok) {
           throw new Error('Failed to fetch manager')
@@ -33,7 +48,12 @@ async function populateDepartmentTable() {
 
       // Fetch employees in the department
       const empResp = await fetch(
-        `http://localhost:5000/employee/department/${department._id}`
+        `http://localhost:5000/employee/department/${department._id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       )
       if (!empResp.ok) {
         throw new Error('Failed to fetch employees in department')

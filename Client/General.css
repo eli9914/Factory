@@ -60,3 +60,28 @@ tr {
 .dropdown {
   margin-bottom: 10px;
 }
+#logoutButton {
+  position: absolute;
+  top: 40px;
+  left: 150px;
+  background-color: darkred;
+  color: rgb(255, 255, 255);
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+#logoutButton:hover {
+  background-color: rgb(0, 0, 0);
+}
+.username {
+  position: absolute;
+  top: 50px;
+  left: 270px; /* Adjust based on your design */
+  color: darkred;
+  font-family: sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+}

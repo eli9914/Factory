@@ -1,3 +1,9 @@
+let token = localStorage.getItem('token')
+if (!token) {
+  alert('You need to log in first.')
+  window.location.href = 'login.html'
+}
+
 async function redirectToDepartmentList() {
   window.location.href = 'Departments.html'
 }
@@ -18,6 +24,7 @@ async function AddDepartment() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(newDepartment),
     })

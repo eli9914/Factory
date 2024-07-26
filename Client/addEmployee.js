@@ -1,10 +1,20 @@
+let token = localStorage.getItem('token')
+if (!token) {
+  alert('You need to log in first.')
+  window.location.href = 'login.html'
+}
+
 async function redirectToAllEmployees() {
   window.location.href = 'employees.html'
 }
 
 async function fetchDepartments() {
   try {
-    const resp = await fetch('http://localhost:5000/department')
+    const resp = await fetch('http://localhost:5000/department', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     if (!resp.ok) {
       throw new Error('Failed to fetch departments')
     }
@@ -33,6 +43,7 @@ async function AddEmployee() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(newEmployee),
     })

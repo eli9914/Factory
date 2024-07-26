@@ -1,9 +1,13 @@
 const userModel = require('../Models/UserModel')
 
 const getAllusers = async () => {
-  const users = await userModel.find({})
-  console.log(users)
-  return users
+  try {
+    const users = await userModel.find({})
+    return users
+  } catch (error) {
+    console.error('Error in getAllusers:', error)
+    throw error
+  }
 }
 
 const getUserByuserid = async (userid) => {
@@ -16,4 +20,14 @@ const getUserByuserid = async (userid) => {
   }
 }
 
-module.exports = { getUserByuserid, getAllusers }
+const getUserName = async (userid) => {
+  try {
+    const user = await getUserByuserid(userid)
+    return user.name
+  } catch (error) {
+    console.error('Error in getUserName:', error)
+    throw error
+  }
+}
+
+module.exports = { getUserByuserid, getAllusers, getUserName }
