@@ -5,6 +5,7 @@ const SECRET_KEY = 'nodeproj'
 
 const userService = require('../Services/UserService')
 const WebServiceRepo = require('../Repositories/LoginRepo')
+const userSessionService = require('../Services/UserSessionService')
 
 router.get('/name', async (req, res) => {
   const token = req.headers.authorization.split(' ')[1]
@@ -34,6 +35,10 @@ router.post('/login', async (req, res) => {
       username === Webuser.username &&
       email === Webuser.email
     ) {
+      await userSessionService.createUserSession(
+        Dbuser.userid,
+        Dbuser.Max_Actions
+      )
       const token = jwt.sign({ userid: Dbuser.userid }, SECRET_KEY, {
         expiresIn: '1h',
       })
@@ -42,6 +47,14 @@ router.post('/login', async (req, res) => {
   } catch (e) {
     return res.status(500).json({ error: 'Internal server error' })
   }
+})
+
+router.post('/session', async (req, res) => {
+  const userSession = await userSessionService.createUserSession(
+    req.body.userid,
+    req.body.maxActions
+  )
+  return res.json(userSession)
 })
 
 module.exports = router

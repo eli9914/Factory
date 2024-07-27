@@ -3,7 +3,7 @@ const cors = require('cors')
 
 require('./Config/connectToDB')
 const authController = require('./Controllers/auhtController')
-const authMiddleware = require('./Controllers/authMiddleware')
+const authMiddleware = require('./Middlwares/authMiddleware')
 
 const DepController = require('./Controllers/DepartmentController')
 const empcontroller = require('./Controllers/EmployeeController')

@@ -1,5 +1,5 @@
 const EmployeeService = require('../Services/EmployeeService')
-
+const actionCheckMiddleware = require('../Middlwares/actionCheckMiddlware')
 const express = require('express')
 
 const router = express.Router()
@@ -15,7 +15,7 @@ router.get('/department/:depid', async (req, res) => {
   return res.json(await EmployeeService.getEmpByDepId(req.params.depid))
 })
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', actionCheckMiddleware, async (req, res) => {
   const Updateduser = req.body
   const id = req.params.id
   const status = await EmployeeService.EditEmployee(id, Updateduser)
@@ -28,13 +28,13 @@ router.get('/:id/shifts', async (req, res) => {
 router.get('/:id/department', async (req, res) => {
   return res.json(await EmployeeService.getDepNameOfEmp(req.params.id))
 })
-router.post('/', async (req, res) => {
+router.post('/', actionCheckMiddleware, async (req, res) => {
   const emp = req.body
   const status = await EmployeeService.AddEmployee(emp)
   return res.json(status)
 })
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', actionCheckMiddleware, async (req, res) => {
   const id = req.params.id
   const status = await EmployeeService.DeleteEmployee(id)
   return res.json(status)
