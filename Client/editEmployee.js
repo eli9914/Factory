@@ -1,12 +1,16 @@
 let token
 
+// Event listener for when the DOM content is loaded
 document.addEventListener('DOMContentLoaded', () => {
+  // Redirect to login page if the token is not found
   token = localStorage.getItem('token')
   if (!token) {
     alert('You need to log in first.')
     window.location.href = 'login.html'
     return
   }
+
+  // Get the employee ID from the URL query parameters
   const params = new URLSearchParams(window.location.search)
   const empId = params.get('id')
   if (empId) {
@@ -16,10 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchDepartments()
 })
 
+// Navigate to the previous page
 async function GoBack() {
   window.history.back()
 }
 
+// Fetch and display the details of the employee based on the provided ID
 async function fetchEmployee(id) {
   try {
     const response = await fetch(`http://localhost:5000/employee/${id}`, {
@@ -43,6 +49,7 @@ async function fetchEmployee(id) {
   }
 }
 
+// Fetch the list of departments and populate the dropdown
 async function fetchDepartments() {
   try {
     const resp = await fetch('http://localhost:5000/department', {
@@ -55,7 +62,9 @@ async function fetchDepartments() {
     }
     const departments = await resp.json()
     const departmentSelect = document.getElementById('department')
-    departmentSelect.innerHTML = '' // Clear previous options
+
+    // Clear previous options and add new department options
+    departmentSelect.innerHTML = ''
     departments.forEach((dep) => {
       const option = document.createElement('option')
       option.value = dep._id
@@ -67,6 +76,7 @@ async function fetchDepartments() {
   }
 }
 
+// Update the employee details with the data from the form
 async function updateEmployee() {
   const empId = document.getElementById('empId').value
   const updatedEmployee = {
@@ -93,11 +103,13 @@ async function updateEmployee() {
     console.error('Error updating employee:', error)
   }
 }
+
+// Delete the employee and handle associated data such as shifts and department
 async function DeleteEmployee() {
   const empId = document.getElementById('empId').value
 
   try {
-    // Check if the employee is a manager
+    // Fetch the employee details
     const empResponse = await fetch(`http://localhost:5000/employee/${empId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -108,10 +120,10 @@ async function DeleteEmployee() {
     }
     const employee = await empResponse.json()
 
+    // If the employee is a manager, update the department to remove the manager
     if (employee && employee.department) {
       const departmentId = employee.department
 
-      // Fetch department details
       const deptResponse = await fetch(
         `http://localhost:5000/department/${departmentId}`,
         {
@@ -151,9 +163,10 @@ async function DeleteEmployee() {
       }
     }
 
-    // Proceed to delete the employee
+    // Remove the employee from any shifts they are assigned to
     await DeleteEmpFromShift(empId)
 
+    // Delete the employee
     const deleteEmpResponse = await fetch(
       `http://localhost:5000/employee/${empId}`,
       {
@@ -175,6 +188,7 @@ async function DeleteEmployee() {
   }
 }
 
+// Remove the employee from all shifts they are assigned to
 async function DeleteEmpFromShift(empId) {
   try {
     console.log('Hello from DeleteEmpFromShift')
@@ -189,10 +203,10 @@ async function DeleteEmpFromShift(empId) {
     if (!shiftsResp.ok) {
       throw new Error('Failed to fetch employee shifts')
     }
-    console.log('shiftsResp', shiftsResp)
-    const shifts = await shiftsResp.json()
-    console.log('Shifts:', shifts)
 
+    const shifts = await shiftsResp.json()
+
+    // Update each shift to remove the employee
     for (const shift of shifts) {
       console.log('Shift:', shift)
       const updatedEmployees = shift.employees.filter((emp) => emp !== empId)
@@ -214,6 +228,7 @@ async function DeleteEmpFromShift(empId) {
   }
 }
 
+// Fetch and display the shifts for the specified employee
 async function fetchShifts(empid) {
   try {
     const response = await fetch(
@@ -229,6 +244,8 @@ async function fetchShifts(empid) {
     }
     const shifts = await response.json()
     const shiftTable = document.getElementById('shiftTable')
+
+    // Populate the shifts table with shift data
     shifts.forEach((shift) => {
       const newTr = document.createElement('tr')
 

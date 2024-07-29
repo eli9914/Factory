@@ -8,12 +8,17 @@ async function redirectToDepartmentList() {
   window.location.href = 'Departments.html'
 }
 
+// Function to add a new department
 async function AddDepartment() {
   const depName = document.getElementById('name').value
+
+  // Check if the department name is provided
   if (depName === '') {
     alert('Department Name Required !!')
     return
   }
+
+  // Create a new department object
   const newDepartment = {
     name: depName,
     manager: null,

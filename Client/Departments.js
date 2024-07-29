@@ -12,6 +12,7 @@ function redirectToEmployees() {
   window.location.href = 'Employees.html'
 }
 
+// Fetch and populate the department table with department details
 async function populateDepartmentTable() {
   const depTableBody = document.getElementById('DepTableBody')
 
@@ -60,7 +61,6 @@ async function populateDepartmentTable() {
       }
       const employees = await empResp.json()
 
-      // Create table cells for department details
       const tdName = document.createElement('td')
       const tdManager = document.createElement('td')
       const tdEmployees = document.createElement('td')

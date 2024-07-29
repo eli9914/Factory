@@ -12,6 +12,7 @@ function redirectToDepartments() {
   window.location.href = 'Departments.html'
 }
 
+// Function to populate the shift table
 async function PopulateShiftTable() {
   try {
     const resp = await fetch('http://localhost:5000/shifts', {
@@ -59,16 +60,7 @@ async function PopulateShiftTable() {
   }
 }
 
-function formatDate(isoDate) {
-  const date = new Date(isoDate)
-  const options = {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-  }
-  return date.toLocaleString(undefined, options)
-}
-
+// Function to show employees of a specific shift
 async function showEmployeesOfShift(shiftId) {
   try {
     const resp = await fetch(
@@ -145,6 +137,7 @@ async function showEmployeesOfShift(shiftId) {
   }
 }
 
+// Function to add an employee to a shift
 async function AddEmpToShift(shiftId, EmpsOfShift) {
   const EmpSelect = document.getElementById('EmpSelect')
   const Emp = EmpSelect.value
@@ -189,7 +182,7 @@ async function AddEmpToShift(shiftId, EmpsOfShift) {
     console.error('Error assigning employees to shift:', error)
   }
 }
-
+// Function to create a new shift
 async function CreateNewShift(event) {
   event.preventDefault()
   const date = document.getElementById('shiftDate').value
@@ -221,4 +214,16 @@ async function CreateNewShift(event) {
   } catch (error) {
     console.error('Error creating shift:', error)
   }
+}
+
+// Function to format date in 'dd/mm/yyyy' format
+
+function formatDate(isoDate) {
+  const date = new Date(isoDate)
+  const options = {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  }
+  return date.toLocaleString(undefined, options)
 }

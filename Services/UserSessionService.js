@@ -1,5 +1,6 @@
 const UserSessionModel = require('../Models/UserSessionModel')
 
+// Function to get a user session by user ID
 const getUserSessionByuserid = async (userid) => {
   try {
     const userSession = await UserSessionModel.findOne({ userid })
@@ -10,6 +11,7 @@ const getUserSessionByuserid = async (userid) => {
   }
 }
 
+// Function to create a new user session
 const createUserSession = async (userid, maxActions) => {
   try {
     const userSession = await getUserSessionByuserid(userid)
@@ -31,6 +33,7 @@ const createUserSession = async (userid, maxActions) => {
   }
 }
 
+// Function to decrement the number of actions for a user session
 const decrementActions = async (userid) => {
   try {
     let userSession = await getUserSessionByuserid(userid)

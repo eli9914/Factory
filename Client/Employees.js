@@ -1,12 +1,15 @@
 let token
 
+// Event listener for when the DOM content is loaded
 document.addEventListener('DOMContentLoaded', () => {
   token = localStorage.getItem('token')
   if (!token) {
+    // Redirect to login page if no token is found
     alert('You need to log in first.')
     window.location.href = 'login.html'
     return
   }
+  // Fetch and display the username, and initialize filters
   fetchAndDisplayUsername()
   filterEmployees()
   filterEmployeesByDepartment()
@@ -31,11 +34,13 @@ async function fetchAndDisplayUsername() {
   }
 }
 
+// Logout and redirect to login page
 function Logout() {
   localStorage.removeItem('token')
   window.location.href = 'login.html'
 }
 
+// Redirect to different pages
 function redirectToNewEmployee() {
   window.location.href = 'addEmployee.html'
 }
@@ -48,6 +53,7 @@ function redirectToShifts() {
   window.location.href = 'Shifts.html'
 }
 
+// Filter employees by department
 async function filterEmployees() {
   const URL = 'http://localhost:5000/department'
 
@@ -65,7 +71,8 @@ async function filterEmployees() {
     const departmentList = await resp.json()
     const depDropDown = document.getElementById('departmentFilter')
 
-    depDropDown.innerHTML = '<option value="">All Departments</option>' // Add a default option
+    // Populate the dropdown with department option
+    depDropDown.innerHTML = '<option value="">All Departments</option>'
 
     for (const dep of departmentList) {
       const newOption = document.createElement('option')
@@ -79,6 +86,7 @@ async function filterEmployees() {
   }
 }
 
+// Filter employees based on selected department
 async function filterEmployeesByDepartment() {
   const selectedDepartment = document.getElementById('departmentFilter').value
   const URL = 'http://localhost:5000/employee'
@@ -96,6 +104,7 @@ async function filterEmployeesByDepartment() {
 
     let employees = await resp.json()
 
+    // Filter employees if a department is selected
     if (selectedDepartment) {
       employees = employees.filter(
         (emp) => emp.department === selectedDepartment
@@ -109,6 +118,7 @@ async function filterEmployeesByDepartment() {
   }
 }
 
+// Populate the employee table
 function populateEmployeeTable(employees) {
   const table = document.getElementById('emptable')
   table.innerHTML = `
@@ -125,6 +135,7 @@ function populateEmployeeTable(employees) {
     return
   }
 
+  // Fetch shifts for the employee
   employees.forEach(async (emp) => {
     try {
       const shiftsResp = await fetch(
@@ -139,7 +150,7 @@ function populateEmployeeTable(employees) {
       if (!shiftsResp.ok) {
         throw new Error('Shifts fetch was not ok')
       }
-
+      // Fetch department name for the employee
       const departmentResp = await fetch(
         `http://localhost:5000/employee/${emp._id}/department`,
         {
@@ -189,6 +200,8 @@ function populateEmployeeTable(employees) {
     }
   })
 }
+
+// Format date to a readable format
 
 function formatDate(isoDate) {
   const date = new Date(isoDate)

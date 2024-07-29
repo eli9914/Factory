@@ -1,3 +1,4 @@
+// Event listener for when the DOM content is loaded
 document.addEventListener('DOMContentLoaded', async () => {
   token = localStorage.getItem('token')
   if (!token) {
@@ -5,6 +6,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.location.href = 'login.html'
     return
   }
+  // Get the department ID from the URL parameters
   const params = new URLSearchParams(window.location.search)
   const depId = params.get('id')
   if (depId) {
@@ -16,6 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function GoBack() {
   window.history.back()
 }
+// Fetch department details by ID and populate the form
 async function fetchDepartment(id) {
   try {
     const resp = await fetch(`http://localhost:5000/department/${id}`, {
@@ -38,6 +41,7 @@ async function fetchDepartment(id) {
   }
 }
 
+// Fetch employees of a department by department ID and populate the manager select field
 async function fetchDepEmployees(id) {
   const resp = await fetch(`http://localhost:5000/employee/department/${id}`, {
     headers: {
@@ -58,6 +62,7 @@ async function fetchDepEmployees(id) {
   })
 }
 
+// Fetch all employees and populate the add employee select field
 async function fetchAllEmployees() {
   const resp = await fetch(`http://localhost:5000/employee`, {
     headers: {
@@ -88,6 +93,7 @@ async function fetchAllEmployees() {
   })
 }
 
+// Add an employee to the department
 async function addEmployeeToDepartment() {
   const empId = document.getElementById('addemp').value
   const depId = document.getElementById('depId').value
@@ -110,7 +116,6 @@ async function addEmployeeToDepartment() {
       department: depId,
     }
 
-    // Send the updated employee data to the server
     const response = await fetch(`http://localhost:5000/employee/${empId}`, {
       method: 'PUT',
       headers: {
@@ -130,6 +135,7 @@ async function addEmployeeToDepartment() {
   }
 }
 
+// Update the department with the form data
 async function updateDepartment() {
   const depId = document.getElementById('depId').value
   const updatedDepartment = {
@@ -155,6 +161,7 @@ async function updateDepartment() {
   }
 }
 
+// Delete a department and its employees
 async function DeleteDepartment() {
   const depId = document.getElementById('depId').value
   try {
@@ -195,6 +202,7 @@ async function DeleteDepartment() {
   }
 }
 
+// Delete an employee by ID
 async function DeleteEmployee(empId) {
   await DeleteEmpFromShift(empId)
   try {
@@ -213,6 +221,7 @@ async function DeleteEmployee(empId) {
   }
 }
 
+// Remove an employee from shifts
 async function DeleteEmpFromShift(empId) {
   try {
     const shiftsResp = await fetch(

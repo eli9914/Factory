@@ -4,11 +4,20 @@
       body {
         font-family: Arial, sans-serif;
         display: flex;
-        justify-content: center;
-        align-items: center;
+        flex-direction: column; /* Stack elements vertically */
+        justify-content: center; /* Center content vertically */
+        align-items: center; /* Center content horizontally */
         height: 100vh;
         margin: 0;
         background-color: #b58686;
+        text-align: center; /* Center text horizontally */
+      }
+      .page-title {
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
+          'Lucida Sans', Arial, sans-serif;
+        font-size: large;
+        margin-bottom: 30px; /* Space between title and login container */
+        color: white;
       }
       .login-container {
         background: white;
@@ -25,9 +34,23 @@
         border: 1px solid #ccc;
         border-radius: 3px;
       }
+      button {
+        padding: 10px 20px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
     </style>
   </head>
   <body>
+    <div class="page-title">
+      <h1>Welcome To Eli's Factory System</h1>
+    </div>
     <div class="login-container">
       <h1>Login</h1>
       <form id="loginForm">
@@ -56,7 +79,7 @@
         localStorage.setItem('token', token)
         window.location.href = './Employees.html'
       } else {
-        alert(data.error)
+        alert(data.error || 'Login failed, please try again.')
       }
     }
   </script>

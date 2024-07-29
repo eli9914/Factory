@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 const SECRET_KEY = 'nodeproj'
 
+// Middleware function to authenticate JWT
 const authenticateJWT = (req, res, next) => {
   // Extract token from the Authorization header
   const authHeader = req.headers.authorization

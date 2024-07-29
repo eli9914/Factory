@@ -8,6 +8,7 @@ async function redirectToAllEmployees() {
   window.location.href = 'employees.html'
 }
 
+// Fetch and populate the departments dropdown
 async function fetchDepartments() {
   try {
     const resp = await fetch('http://localhost:5000/department', {
@@ -32,6 +33,7 @@ async function fetchDepartments() {
   }
 }
 
+// Add a new employee based on the form input
 async function AddEmployee() {
   const newEmployee = {
     name: document.getElementById('name').value,

@@ -2,6 +2,7 @@ const EmployeeModel = require('../Models/EmployeModel')
 const ShiftService = require('../Services/ShiftService')
 const DepartmentService = require('../Services/DepartmentService')
 
+//Function to get All Employees
 const getAllEmployees = async () => {
   try {
     return await EmployeeModel.find({})
@@ -9,7 +10,7 @@ const getAllEmployees = async () => {
     throw error
   }
 }
-
+// Function to get employee by his id
 const getEmpById = async (id) => {
   if (!id) {
     throw new Error('Employee ID is missing or invalid')
@@ -21,7 +22,7 @@ const getEmpById = async (id) => {
     throw new Error('Failed to fetch employee')
   }
 }
-
+// Function to add a new employee to the database
 const AddEmployee = async (newEmp) => {
   try {
     const newEmployee = new EmployeeModel(newEmp)
@@ -31,6 +32,7 @@ const AddEmployee = async (newEmp) => {
     throw new Error('Failed to Add Employee')
   }
 }
+// Function to update an  employee by his id
 const EditEmployee = async (id, updatedEmp) => {
   try {
     await EmployeeModel.findByIdAndUpdate(id, updatedEmp)
@@ -40,6 +42,7 @@ const EditEmployee = async (id, updatedEmp) => {
     throw new Error('Failed to Update Employee')
   }
 }
+// Function to delete an employee by his id
 const DeleteEmployee = async (id) => {
   try {
     await EmployeeModel.findByIdAndDelete(id)
@@ -50,6 +53,7 @@ const DeleteEmployee = async (id) => {
   }
 }
 
+// Function to get the department name of an employee by his id
 const getDepNameOfEmp = async (id) => {
   try {
     const emp = await getEmpById(id)
@@ -61,6 +65,7 @@ const getDepNameOfEmp = async (id) => {
   }
 }
 
+// Function to get all employees belonging to a specific department
 const getEmpByDepId = async (depid) => {
   try {
     const emp = await EmployeeModel.find({ department: depid })
@@ -70,11 +75,10 @@ const getEmpByDepId = async (depid) => {
     throw new Error('Error fetching emp by department id:')
   }
 }
-
+// Function to retrieve all shifts for a specific employee by his id
 const getShiftByEmp = async (id) => {
   const employee = await getEmpById(id)
 
-  // Check if the employee or their shifts array is undefined or empty
   if (!employee || !employee.shift || employee.shift.length === 0) {
     return [] // Return an empty array if there are no shifts
   }
@@ -84,6 +88,7 @@ const getShiftByEmp = async (id) => {
     return await ShiftService.getShiftById(shift)
   })
 
+  // Resolve all shift promises and return the list of shifts
   const Shifts = await Promise.all(shiftsPromises)
   return Shifts
 }
