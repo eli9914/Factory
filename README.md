@@ -41,7 +41,7 @@ Follow these steps to set up the project locally:
 
 ## Usage
 ### Login
-1. The project will automatically open the login page in your default browser: `http://localhost:5000/login.html`.
+1. The project will automatically open the login page in your default browser.
 2. Enter your user ID, email, and username to log in.
 3. If the credentials are correct, you will be redirected to the Employees page.
 
