@@ -31,7 +31,6 @@ Follow these steps to set up the project locally:
 
 4. **Set up the backend server**:
     - Ensure MongoDB is installed and running.
-    - Create a `.env` file in the root directory and add the necessary environment variables.
 
 5. **Start the project**:
     ```bash
